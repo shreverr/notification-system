@@ -2,6 +2,7 @@ import { zValidator } from "@hono/zod-validator"
 import { Hono } from "hono"
 import z from "zod"
 import User from "../models/user.model"
+import { notificationClient } from ".."
 
 const app = new Hono()
 
@@ -44,15 +45,21 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
 
 app.post("/register/send-otp",
   zValidator("json", registerSchema.pick({ email: true })),
-  (c) => {
+  async (c) => {
     const { email } = c.req.valid("json")
 
-    console.log("sendign OTP");
-
+    console.log("sending OTP");
+    await notificationClient.notifications["send-notification"].$post({
+      json: {
+        email,
+        message: "Your OTP code is 123456. Please verify your account.",
+        subject: "OTP Verification"
+      }
+    })
 
     return c.json({
       success: true,
-      message: "OTP sent succesfully"
+      message: "OTP sent successfully"
     }, 200)
   }
 )
