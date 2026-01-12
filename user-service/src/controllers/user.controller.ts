@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator"
 import { Hono } from "hono"
-import z, { email } from "zod"
+import z from "zod"
 import User from "../models/user.model"
 
 const app = new Hono()
@@ -34,13 +34,28 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
     }, 200)
   } catch (error) {
     console.log(error);
-    
+
     return c.json({
       success: false,
       message: "Internal server error"
     }, 500)
   }
 })
+
+app.post("/register/send-otp",
+  zValidator("json", registerSchema.pick({ email: true })),
+  (c) => {
+    const { email } = c.req.valid("json")
+
+    console.log("sendign OTP");
+
+
+    return c.json({
+      success: true,
+      message: "OTP sent succesfully"
+    }, 200)
+  }
+)
 
 app.get((c) => {
   return c.json({
