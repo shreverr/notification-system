@@ -9,6 +9,8 @@ export const sendMail = async (
   message: string
 ) => {
   try {
+    console.log(`sending email ${to}`);
+    
     const { data, error } = await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
       to,

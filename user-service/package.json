@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@hono/zod-validator": "^0.7.6",
+    "bullmq": "^5.66.5",
     "dotenv": "^17.2.3",
     "hono": "^4.11.3",
     "mongoose": "^9.1.2",

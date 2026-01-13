@@ -2,7 +2,7 @@ import { zValidator } from "@hono/zod-validator"
 import { Hono } from "hono"
 import z from "zod"
 import User from "../models/user.model"
-import { notificationClient } from ".."
+import { notificationClient, notificationQueue } from ".."
 
 const app = new Hono()
 
@@ -17,17 +17,19 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
   try {
     const userExists = !!(await User.findOne({ email }))
 
-    if (userExists) {
-      return c.json({
-        success: false,
-        message: "user exists"
-      }, 409)
-    }
+    // if (userExists) {
+    //   return c.json({
+    //     success: false,
+    //     message: "user exists"
+    //   }, 409)
+    // }
 
     const user = await User.create({
       email,
       password
     })
+
+    notificationQueue.add("welcome-email", { email })
 
     return c.json({
       success: true,
